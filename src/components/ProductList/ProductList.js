@@ -1,8 +1,46 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import nophoto from '../../assets/images/nophoto.png';
+import ProductService from './../../services/productService';
+import CategoryService from './../../services/categoryService';
 
 function ProductList() {
+    const [state, setState] = useState({
+        loading: false,
+        products: [],
+        categories: [],
+        errorMessage: ""
+    })
+
+    useEffect(() => {
+        try {
+            setState({ ...state, loading: true });
+            async function getData() {
+                let resProducts = await ProductService.getProducts();
+                let resCategories = await CategoryService.getCategories();
+                setState({
+                    ...state,
+                    loading: false,
+                    products: resProducts.data,
+                    categories: resCategories.data
+                })
+            }
+            getData();
+        } catch (error) {
+            setState({
+                ...state,
+                errorMessage: error.message
+            })
+        }
+    }, [])
+
+
+    const getCategoryName = (categoryId) => {
+        let category = categories.find((cat) => cat.id === categoryId);
+        return category.categoryName
+    }
+    const { loading, products, categories } = state;
+
     return (
         <>
             <section className="product-info my-2">
@@ -26,116 +64,37 @@ function ProductList() {
             <section className="show-products mb-2">
                 <div className="container">
                     <div className="row">
-                        <div className="col-md-3 mb-2">
-                            <div className="card">
-                                <img src={nophoto} alt="no photo" />
-                                <div className="card-body">
-                                    <div className="d-flex align-items-center">
-                                        <h5 className="card-title me-2">Men's clothers</h5>
-                                        <div className="d-flex align-items-center">
-                                            <Link className="">
-                                                <i className="fa-solid fa-circle-info text-secondary"></i>
-                                            </Link>
-                                            <Link className="mx-1">
-                                                <i className="fa-solid fa-pen text-success"></i>
-                                            </Link>
-                                            <Link className="">
-                                                <i className="fa-solid fa-xmark text-danger"></i>
-                                            </Link>
+                        {
+                            loading ? <p>Loading data ...</p> : (
+                                products.map((product) => (
+                                    <div className="col-md-3 mb-2">
+                                        <div className="card">
+                                            <img className="photo-md mx-auto d-block" src={product.image || nophoto} alt="no photo" />
+                                            <div className="card-body">
+                                                <div className="d-flex align-items-center">
+                                                    <h5 className="card-title me-2">{getCategoryName(product.categoryId)}</h5>
+                                                    <div className="d-flex align-items-center">
+                                                        <Link className="">
+                                                            <i className="fa-solid fa-circle-info text-secondary"></i>
+                                                        </Link>
+                                                        <Link className="mx-1">
+                                                            <i className="fa-solid fa-pen text-success"></i>
+                                                        </Link>
+                                                        <Link className="">
+                                                            <i className="fa-solid fa-xmark text-danger"></i>
+                                                        </Link>
+                                                    </div>
+                                                </div>
+                                                <div className="card-text">
+                                                    <p>{product.sizes.join(" | ")}</p>
+                                                    <p>{product.title}</p>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <p className="card-text">Fugiat nisi ullamco in sint velit.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-3 mb-2">
-                            <div className="card">
-                                <img src={nophoto} alt="no photo" />
-                                <div className="card-body">
-                                    <div className="d-flex align-items-center">
-                                        <h5 className="card-title me-2">Men's clothers</h5>
-                                        <div className="d-flex align-items-center">
-                                            <Link className="">
-                                                <i className="fa-solid fa-circle-info text-secondary"></i>
-                                            </Link>
-                                            <Link className="mx-1">
-                                                <i className="fa-solid fa-pen text-success"></i>
-                                            </Link>
-                                            <Link className="">
-                                                <i className="fa-solid fa-xmark text-danger"></i>
-                                            </Link>
-                                        </div>
-                                    </div>
-                                    <p className="card-text">Fugiat nisi ullamco in sint velit.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-3 mb-2">
-                            <div className="card">
-                                <img src={nophoto} alt="no photo" />
-                                <div className="card-body">
-                                    <div className="d-flex align-items-center">
-                                        <h5 className="card-title me-2">Men's clothers</h5>
-                                        <div className="d-flex align-items-center">
-                                            <Link className="">
-                                                <i className="fa-solid fa-circle-info text-secondary"></i>
-                                            </Link>
-                                            <Link className="mx-1">
-                                                <i className="fa-solid fa-pen text-success"></i>
-                                            </Link>
-                                            <Link className="">
-                                                <i className="fa-solid fa-xmark text-danger"></i>
-                                            </Link>
-                                        </div>
-                                    </div>
-                                    <p className="card-text">Fugiat nisi ullamco in sint velit.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-3 mb-2">
-                            <div className="card">
-                                <img src="https://fakestoreapi.com/img/51Y5NI-I5jL._AC_UX679_.jpg" alt="no photo" />
-                                <div className="card-body">
-                                    <div className="d-flex align-items-center">
-                                        <h5 className="card-title me-2">Men's clothers</h5>
-                                        <div className="d-flex align-items-center">
-                                            <Link className="">
-                                                <i className="fa-solid fa-circle-info text-secondary"></i>
-                                            </Link>
-                                            <Link className="mx-1">
-                                                <i className="fa-solid fa-pen text-success"></i>
-                                            </Link>
-                                            <Link className="">
-                                                <i className="fa-solid fa-xmark text-danger"></i>
-                                            </Link>
-                                        </div>
-                                    </div>
-                                    <p className="card-text">Fugiat nisi ullamco in sint velit.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-3 mb-2">
-                            <div className="card">
-                                <img src="https://fakestoreapi.com/img/81XH0e8fefL._AC_UY879_.jpg" alt="no photo" />
-                                <div className="card-body">
-                                    <div className="d-flex align-items-center">
-                                        <h5 className="card-title me-2">Men's clothers</h5>
-                                        <div className="d-flex align-items-center">
-                                            <Link className="">
-                                                <i className="fa-solid fa-circle-info text-secondary"></i>
-                                            </Link>
-                                            <Link className="mx-1">
-                                                <i className="fa-solid fa-pen text-success"></i>
-                                            </Link>
-                                            <Link className="">
-                                                <i className="fa-solid fa-xmark text-danger"></i>
-                                            </Link>
-                                        </div>
-                                    </div>
-                                    <p className="card-text">Fugiat nisi ullamco in sint velit.</p>
-                                </div>
-                            </div>
-                        </div>
+                                ))
+                            )
+                        }
                     </div>
                 </div>
             </section>

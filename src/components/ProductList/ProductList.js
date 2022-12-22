@@ -6,6 +6,8 @@ import CategoryService from './../../services/categoryService';
 import Helper from './../../helper/Helper';
 import { toast } from "react-toastify";
 import Spinner from "../Spinner/Spinner";
+import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css';
 
 function ProductList() {
     const [state, setState] = useState({
@@ -42,7 +44,7 @@ function ProductList() {
 
     const getCategoryName = (categoryId) => {
         let category = categories.find((cat) => cat.id === categoryId);
-        return category.categoryName
+        return category ? category.categoryName : "";
     }
 
     const handleSearch = async (e) => {
@@ -77,23 +79,51 @@ function ProductList() {
     }
 
     const handleRemoveProduct = async (product) => {
-        let confirm = window.confirm(`Are you sure to remove the ${product.title}?`);
-        if (confirm) {
-            setState({ ...state, loading: true });
-            let resRemove = await ProductService.removeProduct(product.id);
-            if (resRemove.data) {
-                let resProducts = await ProductService.getProducts();
-                setState({
-                    ...state,
-                    loading: false,
-                    products: resProducts.data
-                })
-                toast.success(`${product.title} has been removed`, { position: 'top-right' })
-            }
-            else {
-                toast.info('Something went wrong, please contact adminstrator!');
-            }
-        }
+        // let confirm = window.confirm(`Are you sure to remove the ${product.title}?`);
+        // if (confirm) {
+        //     setState({ ...state, loading: true });
+        //     let resRemove = await ProductService.removeProduct(product.id);
+        //     if (resRemove.data) {
+        //         let resProducts = await ProductService.getProducts();
+        //         setState({
+        //             ...state,
+        //             loading: false,
+        //             products: resProducts.data
+        //         })
+        //         toast.success(`${product.title} has been removed`, { position: 'top-right' })
+        //     }
+        //     else {
+        //         toast.info('Something went wrong, please contact adminstrator!');
+        //     }
+        // }
+        confirmAlert({
+            title: "Remove product",
+            message: `Are you sure to remove product ${product.title}?`,
+            buttons: [
+                {
+                    label: "Cancel"
+                },
+                {
+                    label: "Confirm",
+                    onClick: async () => {
+                        setState({ ...state, loading: true });
+                        let resRemove = await ProductService.removeProduct(product.id);
+                        if (resRemove.data) {
+                            let resProducts = await ProductService.getProducts();
+                            setState({
+                                ...state,
+                                loading: false,
+                                products: resProducts.data
+                            })
+                            toast.success(`${product.title} has been removed`, { position: 'top-right' })
+                        }
+                        else {
+                            toast.info('Something went wrong, please contact adminstrator!');
+                        }
+                    }
+                }
+            ]
+        })
     }
     const { loading, products, categories } = state;
 
@@ -124,7 +154,7 @@ function ProductList() {
                 <div className="container">
                     <div className="row">
                         {
-                            loading ? <Spinner/> : (
+                            loading ? <Spinner /> : (
                                 products.map((product) => (
                                     <div key={product.id} className="col-md-3 mb-2">
                                         <div className="card">

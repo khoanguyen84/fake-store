@@ -23,7 +23,7 @@ class FileHelper {
         formData.append("signature", signature);
         formData.append("api_key", api_key);
         formData.append("timestamp", timestamp);
-        return axios.post(CLOUDINARY_DESTROY_API_URL, formData,{
+        return axios.post(CLOUDINARY_DESTROY_API_URL, formData, {
             'Access-Control-Allow-Origin': '*'
         });
     }

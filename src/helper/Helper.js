@@ -1,7 +1,11 @@
-class Helper{
-    static formatCurrency(number){
+class Helper {
+    static formatCurrency(number) {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' })
-                        .format(Number(number));
+            .format(Number(number));
+    }
+
+    static getFilename(fileUrl) {
+        return fileUrl.split("/").pop().split('.')[0];
     }
 }
 

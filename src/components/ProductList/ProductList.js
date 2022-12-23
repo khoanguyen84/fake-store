@@ -6,6 +6,7 @@ import CategoryService from './../../services/categoryService';
 import Helper from './../../helper/Helper';
 import { toast } from "react-toastify";
 import Spinner from "../Spinner/Spinner";
+import FileHelper from './../../helper/FileHelper';
 
 function ProductList() {
     const [state, setState] = useState({
@@ -42,7 +43,7 @@ function ProductList() {
 
     const getCategoryName = (categoryId) => {
         let category = categories.find((cat) => cat.id === categoryId);
-        return category.categoryName
+        return category ? category.categoryName : ""
     }
 
     const handleSearch = async (e) => {
@@ -80,6 +81,11 @@ function ProductList() {
         let confirm = window.confirm(`Are you sure to remove the ${product.title}?`);
         if (confirm) {
             setState({ ...state, loading: true });
+            // destroy phot
+            let filename = Helper.getFilename(product.image);
+            console.log(filename);
+            let resDestroy = await FileHelper.destroyImage(filename);
+
             let resRemove = await ProductService.removeProduct(product.id);
             if (resRemove.data) {
                 let resProducts = await ProductService.getProducts();
@@ -148,7 +154,7 @@ function ProductList() {
                                                 </div>
                                                 <div className="card-text">
                                                     <div className="d-flex justify-content-between">
-                                                        <span>{product.sizes.join(" | ")}</span>
+                                                        <span>{product.sizes ? product.sizes.join(" | ") : ""}</span>
                                                         <span className="text-success">{Helper.formatCurrency(product.price)}</span>
                                                     </div>
                                                     <p>{product.title}</p>
